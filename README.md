@@ -7,6 +7,10 @@ VueJs Paginator is a simple but powerful plugin since it gives you access on how
 
 The way you use it is similar to Laravel's paginator.
 
+## About this fork
+This is a fork to make it work in a Spark/laravel environment.
+Specifically I changed the $http call to axios.
+
 ## Installation
 > For Vue 1.* use [v1.0.15](https://github.com/hootlex/vuejs-paginator/tree/v1.0.15).
 
