@@ -49,7 +49,7 @@ export default {
       this.$emit("request_start");
       pageUrl = pageUrl || this.resource_url
       var self = this
-      this.$http.get(pageUrl, { headers: this.config.headers })
+      axios.get(pageUrl, { headers: this.config.headers })
       .then(function (response) {
         this.$emit("request_finish",response);
         self.handleResponseData(response.data)
