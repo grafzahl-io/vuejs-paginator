@@ -60,7 +60,7 @@ export default {
     handleResponseData (response) {
       this.makePagination(response)
       let data = utils.getNestedValue(response, this.config.remote_data)
-      this.$emit('update', data)
+      this.$emit('update', response)
     },
     makePagination (data) {
       this.current_page = utils.getNestedValue(data, this.config.remote_current_page)
