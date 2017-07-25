@@ -150,7 +150,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    handleResponseData: function handleResponseData(response) {
 	      this.makePagination(response);
 	      var data = _utils.utils.getNestedValue(response, this.config.remote_data);
-	      this.$emit('update', data);
+	      this.$emit('update', response);
 	    },
 	    makePagination: function makePagination(data) {
 	      this.current_page = _utils.utils.getNestedValue(data, this.config.remote_current_page);
