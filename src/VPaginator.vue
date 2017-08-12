@@ -46,14 +46,14 @@ export default {
   },
   methods: {
     fetchData (pageUrl) {
-      this.$emit("request_start");
+      Bus.$emit("paginatorRequestStart");
       pageUrl = pageUrl || this.resource_url
       var self = this
       axios.get(pageUrl).then(response => {
-	      this.$emit("request_finish", response);
+	      Bus.$emit("paginatorRequestFinish", response);
 	      self.handleResponseData(response.data);
 	    }).catch(response => {
-	      this.$emit("request_error", response);
+	      Bus.$emit("paginatorRequestFailed", response);
 	      console.log('Fetching data failed.', response);
 	    });
     },
