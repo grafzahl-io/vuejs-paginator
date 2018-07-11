@@ -66,6 +66,72 @@ Every time a page is changed or fetched, resource variable will contain the retu
 </ul>
 ```
 
+### Extended functions
+
+#### url_builder Property
+
+There is a new property that allows to pass a function callback that expects an property to pass the page as a number and returns the URL string to the page.
+
+This property is required if you want to use the "first" or "last" button. Or if you want to use the "Jump To" function.
+
+```html
+<v-paginator
+    :options="paginatorOptions"
+    :url_builder="getSyncProductLoadUrl"
+    :resource_url="getSyncProductLoadUrl(1)"
+    ref="syncProductPagination"
+    @update="loadSyncProducts">
+</v-paginator>
+```
+
+This is a function, the passed callback could look like.
+
+```
+/**
+ * returns the sync product url for the paginator
+ *
+ * @param int page
+ */
+getSyncProductLoadUrl: function(page) {
+    return '/products/index/page/' + page;
+},
+```
+
+### Jump-To Button
+
+To display a separate element with an input field where the user can input a specific
+number to jump to a page, you can pass the following property to the options prop.
+
+```
+paginatorOptions: {
+  show_jump_to_input: true,
+}
+```
+
+### Enable "first" and "last" Buttons
+
+To display new buttons for jumping directly to the first or the last page you need to pass the following option:
+
+```
+paginatorOptions: {
+  show_first_last_buttons: true,
+}
+```
+
+### New options to overwrite / i18n the texts
+
+To alternate the texts which are used in the plugin, you can pass the following options:
+
+```
+paginatorOptions: {
+  jump_to_button_text: 'Jump to',
+  previous_button_text: 'Previous',
+  next_button_text: 'Next',
+  page_label_text: 'Page',
+  of_label_text: 'of'
+}
+```
+
 ### Documentation
 [Here you can find the detailed Documentation](http://hootlex.github.io/vuejs-paginator/)
 

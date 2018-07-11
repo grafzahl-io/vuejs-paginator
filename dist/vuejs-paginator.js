@@ -107,6 +107,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	      type: String,
 	      required: true
 	    },
+	    url_builder: {
+	      type: Function,
+	      required: false,
+	      default: function _default() {
+	        return function () {
+	          return false;
+	        };
+	      }
+	    },
 	    custom_template: '',
 	    options: {
 	      type: Object,
@@ -122,27 +131,50 @@ return /******/ (function(modules) { // webpackBootstrap
 	      last_page: '',
 	      next_page_url: '',
 	      prev_page_url: '',
+	      jumpto: 1,
 	      config: {
 	        remote_data: 'data',
 	        remote_current_page: 'current_page',
 	        remote_last_page: 'last_page',
 	        remote_next_page_url: 'next_page_url',
 	        remote_prev_page_url: 'prev_page_url',
+	        jump_to_button_text: 'Jump to',
 	        previous_button_text: 'Previous',
-	        next_button_text: 'Next'
+	        next_button_text: 'Next',
+	        page_label_text: 'Page',
+	        of_label_text: 'of',
+	        show_jump_to_input: true,
+	        show_first_last_buttons: true
 	      }
 	    };
 	  },
 	
 	  methods: {
+	    jumpTo: function jumpTo() {
+	      if (this.jumpto == this.current_page) {
+	        return;
+	      }
+	
+	      if (this.jumpto <= 1) {
+	        this.jumpto = 1;
+	      }
+	
+	      var last = parseInt(this.last_page);
+	      if (this.jumpto >= last) {
+	        this.jumpto = last;
+	      }
+	
+	      var url = this.url_builder(this.jumpto);
+	      this.fetchData(url);
+	    },
 	    fetchData: function fetchData(pageUrl) {
 	      Bus.$emit("paginatorRequestStart");
 	      pageUrl = pageUrl || this.resource_url;
 	      var self = this;
-              axios.get(pageUrl).then(response => {
-	        Bus.$emit("paginatorRequestFinished", response);
+	      axios.get(pageUrl).then(function (response) {
+	        Bus.$emit("paginatorRequestFinish", response);
 	        self.handleResponseData(response.data);
-	      }).catch(response => {
+	      }).catch(function (response) {
 	        Bus.$emit("paginatorRequestFailed", response);
 	        console.log('Fetching data failed.', response);
 	      });
@@ -175,13 +207,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	// </script>
 	// <template>
 	//   <div class="v-paginator">
-	//     <button class="btn btn-default" @click="fetchData(prev_page_url)" :disabled="!prev_page_url">
-	//       {{config.previous_button_text}}
-	//     </button>
-	//     <span>Page {{current_page}} of {{last_page}}</span>
-	//     <button class="btn btn-default" @click="fetchData(next_page_url)" :disabled="!next_page_url">
-	//       {{config.next_button_text}}
-	//     </button>
+	//     <div class="pagination">
+	//       <button v-if="config.show_first_last_buttons" class="btn btn-default paginator-jump-to-first" @click="fetchData(url_builder(1))" :disabled="current_page == 1">&laquo;
+	//       </button>
+	//       <button class="btn btn-default" @click="fetchData(prev_page_url)" :disabled="!prev_page_url">
+	//         {{config.previous_button_text}}
+	//       </button>
+	//       <span>{{ config.page_label_text }} {{current_page}} {{ config.of_label_text }} {{last_page}}</span>
+	//       <button class="btn btn-default" @click="fetchData(next_page_url)" :disabled="!next_page_url">
+	//         {{config.next_button_text}}
+	//       </button>
+	//       <button v-if="config.show_first_last_buttons" class="btn btn-default paginator-jump-to-last" @click="fetchData(url_builder(last_page))" :disabled="current_page == last_page">&raquo;
+	//       </button>
+	//     </div>
+	//     <div class="jumpto" v-if="config.show_jump_to_input">
+	//       <input type="text" class="form-control" v-model="jumpto"/><button class="btn btn-default" @click="jumpTo()">{{ config.jump_to_button_text }}</button>
+	//     </div>
 	//   </div>
 	// </template>
 	
@@ -224,7 +265,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 5 */
 /***/ (function(module, exports) {
 
-	module.exports = "<div class=\"v-paginator\">\n    <button class=\"btn btn-default\" @click=\"fetchData(prev_page_url)\" :disabled=\"!prev_page_url\">\n      {{config.previous_button_text}}\n    </button>\n    <span>Page {{current_page}} of {{last_page}}</span>\n    <button class=\"btn btn-default\" @click=\"fetchData(next_page_url)\" :disabled=\"!next_page_url\">\n      {{config.next_button_text}}\n    </button>\n  </div>";
+	module.exports = "<div class=\"v-paginator\">\n    <div class=\"pagination\">\n      <button v-if=\"config.show_first_last_buttons\" class=\"btn btn-default paginator-jump-to-first\" @click=\"fetchData(url_builder(1))\" :disabled=\"current_page == 1\">&laquo;\n      </button>\n      <button class=\"btn btn-default\" @click=\"fetchData(prev_page_url)\" :disabled=\"!prev_page_url\">\n        {{config.previous_button_text}}\n      </button>\n      <span>{{ config.page_label_text }} {{current_page}} {{ config.of_label_text }} {{last_page}}</span>\n      <button class=\"btn btn-default\" @click=\"fetchData(next_page_url)\" :disabled=\"!next_page_url\">\n        {{config.next_button_text}}\n      </button>\n      <button v-if=\"config.show_first_last_buttons\" class=\"btn btn-default paginator-jump-to-last\" @click=\"fetchData(url_builder(last_page))\" :disabled=\"current_page == last_page\">&raquo;\n      </button>\n    </div>\n    <div class=\"jumpto\" v-if=\"config.show_jump_to_input\">\n      <input type=\"text\" class=\"form-control\" v-model=\"jumpto\"/><button class=\"btn btn-default\" @click=\"jumpTo()\">{{ config.jump_to_button_text }}</button>\n    </div>\n  </div>";
 
 /***/ })
 /******/ ])
