@@ -3,11 +3,11 @@
     <div class="pagination">
       <button v-if="config.show_first_last_buttons" class="btn btn-default paginator-jump-to-first" @click="fetchData(url_builder(1))" :disabled="current_page == 1">&laquo;
       </button>
-      <button class="btn btn-default" @click="fetchData(prev_page_url)" :disabled="!prev_page_url">
+      <button class="btn btn-default" @click="prevPage()" :disabled="!prev_page_url">
         {{config.previous_button_text}}
       </button>
       <span>{{ config.page_label_text }} {{current_page}} {{ config.of_label_text }} {{last_page}}</span>
-      <button class="btn btn-default" @click="fetchData(next_page_url)" :disabled="!next_page_url">
+      <button class="btn btn-default" @click="nextPage()" :disabled="!next_page_url">
         {{config.next_button_text}}
       </button>
       <button v-if="config.show_first_last_buttons" class="btn btn-default paginator-jump-to-last" @click="fetchData(url_builder(last_page))" :disabled="current_page == last_page">&raquo;
@@ -49,6 +49,7 @@ export default {
       last_page: '',
       next_page_url: '',
       prev_page_url: '',
+      query: '',
       jumpto: 1,
       config: {
           remote_data: 'data',
@@ -84,9 +85,23 @@ export default {
       var url = this.url_builder(this.jumpto);
       this.fetchData(url);
     },
+    nextPage() {
+      Bus.$emit("paginatorNextPageClicked");
+      this.fetchData(this.next_page_url)
+    },
+    prevPage() {
+      Bus.$emit("paginatorPrevPageClicked");
+      this.fetchData(this.prev_page_url)
+    },
+    setUriQuery(string) {
+      this.query = string;
+    },
     fetchData (pageUrl) {
       Bus.$emit("paginatorRequestStart");
       pageUrl = pageUrl || this.resource_url
+      if(this.query !== '') {
+        pageUrl = pageUrl + '?' + this.query
+      }
       var self = this
       axios.get(pageUrl).then(response => {
         Bus.$emit("paginatorRequestFinish", response);
