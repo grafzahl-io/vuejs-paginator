@@ -68,6 +68,33 @@ Every time a page is changed or fetched, resource variable will contain the retu
 
 ### Extended functions
 
+#### Append GET parameters to urls
+
+To ensure you can integrate filter string etc. I integrated a method called `setUriQuery()` wich can be called after a 
+filter has been added to the collection or something like this.
+
+It can be called from outside the component with the help of references in vue:
+```html
+<v-paginator
+  :options="paginatorOptions"
+  :url_builder="getSyncProductLoadUrl"
+  :resource_url="getSyncProductLoadUrl(1)"
+  ref="syncProductPagination"
+  @update="loadSyncProducts">
+</v-paginator>
+```
+
+With the attribute `ref` above, we are now able to
+call the method to set a new query:
+
+```js
+this.$refs.syncProductPagination.setUriQuery(queryString)
+```
+
+The `queryString` variable is supposed to be a URI query-string without the leading `?`.
+
+
+
 #### url_builder Property
 
 There is a new property that allows to pass a function callback that expects an property to pass the page as a number and returns the URL string to the page.
